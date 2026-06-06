@@ -284,7 +284,27 @@ class StockDashboardHandler(BaseHTTPRequestHandler):
         else:
             self.send_error(404, "Page Not Found")
 
+def ensure_initial_data():
+    """Ensure data files exist on startup. If not, run scraper and predictor."""
+    bumi_csv = os.path.join(WORKSPACE_DIR, 'BUMI_stock.csv')
+    inet_csv = os.path.join(WORKSPACE_DIR, 'INET_stock.csv')
+    pred_csv = os.path.join(OUTPUT_DIR, 'prediksi_30_hari.csv')
+    
+    if not os.path.exists(bumi_csv) or not os.path.exists(inet_csv) or not os.path.exists(pred_csv):
+        print("Data files missing on startup. Running news scraping and predictions...")
+        try:
+            # 1. Run news fetch
+            print("Running news_sentiment_v2.py...")
+            subprocess.run([sys.executable, os.path.join(WORKSPACE_DIR, 'news_sentiment_v2.py')], cwd=WORKSPACE_DIR)
+            # 2. Run predictions
+            print("Running prediksi.py...")
+            subprocess.run([sys.executable, os.path.join(WORKSPACE_DIR, 'prediksi.py')], cwd=WORKSPACE_DIR)
+            print("Initial data generated successfully.")
+        except Exception as e:
+            print(f"Error generating initial data: {e}")
+
 def run(server_class=HTTPServer, handler_class=StockDashboardHandler, port=PORT):
+    ensure_initial_data()
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
     print(f"Stock Prediction Dashboard Server running at http://localhost:{port}/")
