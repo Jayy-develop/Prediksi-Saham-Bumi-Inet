@@ -12,7 +12,7 @@ from datetime import datetime
 # NEWSAPI Configuration
 # ============================================================================
 # Get FREE API key dari: https://newsapi.org/ (free tier = 100 requests/day)
-NEWSAPI_KEY = os.environ.get('NEWSAPI_KEY', "bd4abc51085b47a9bbe5f0d95496facf")  # Environment variable or fallback
+NEWSAPI_KEY = os.environ.get('NEWSAPI_KEY', "")  # Safe: environment variable only
 
 # ============================================================================
 # ALTERNATIVE NEWS SOURCES (Jika NewsAPI tidak tersedia)
