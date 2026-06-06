@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.log
+
+# Local Stock Data & Forecast Outputs
+BUMI_stock.csv
+INET_stock.csv
+output/news_sentiment_log.txt
+output/news_database.csv
+output/sentiment_history.csv
+output/prediksi_30_hari.csv
+output/eval_*.csv
+output/*.png
+
+# IDE / System files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

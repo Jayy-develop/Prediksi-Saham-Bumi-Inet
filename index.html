@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📈 AI Stock Prediction Dashboard - BUMI & INET</title>
+  <link rel="stylesheet" href="index.css">
+  <!-- Load Chart.js from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- HEADER -->
+    <header class="glass-panel">
+      <div class="brand">
+        <h1 class="brand-logo">PREDIKSI SAHAM AI</h1>
+        <span class="brand-tag">v2.1 Real-Time News</span>
+      </div>
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span id="systemStatusText">Sistem Aktif (WIB)</span>
+      </div>
+    </header>
+
+    <!-- SELECTOR BAR (TABS) -->
+    <div class="selector-bar">
+      <div class="tabs">
+        <button class="tab-btn active" data-stock="BUMI">
+          <span>🟡</span> BUMI (Bumi Resources)
+        </button>
+        <button class="tab-btn" data-stock="INET">
+          <span>🔵</span> INET (Indonesia Energy)
+        </button>
+      </div>
+      
+      <div class="action-btns">
+        <button class="btn btn-secondary" id="btnExportCSV">
+          📥 Export CSV
+        </button>
+        <button class="btn btn-secondary" id="btnRunNewsFetch">
+          📰 Update Berita
+        </button>
+        <button class="btn btn-primary" id="btnRunPrediction">
+          ⚡ Jalankan Model ML
+        </button>
+      </div>
+    </div>
+
+    <!-- MAIN CARDS GRID (CURRENT VALUES) -->
+    <div class="stock-grid">
+      <!-- BUMI CARD -->
+      <div class="glass-panel stock-card bumi-card">
+        <div class="stock-card-header">
+          <div class="stock-title">
+            <h3>BUMI Resources</h3>
+            <span>BUMI.JK (Coal Mining)</span>
+          </div>
+          <div class="trend-badge" id="bumiTrendBadge">
+            --
+          </div>
+        </div>
+        <div class="stock-price-row">
+          <div class="price-current" id="bumiPriceCurrent">Rp --</div>
+          <div class="price-change" id="bumiPriceChange">--</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item">
+            <span class="metric-label">Target 30 Hari</span>
+            <span class="metric-value" id="bumiPriceTarget">Rp --</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Confidence</span>
+            <span class="metric-value" id="bumiConfidence">--</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Analisis Sentimen</span>
+            <span class="metric-value" id="bumiSentimentVal">--</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INET CARD -->
+      <div class="glass-panel stock-card inet-card">
+        <div class="stock-card-header">
+          <div class="stock-title">
+            <h3>Indonesia Energy</h3>
+            <span>INET.JK (Oil & Gas Services)</span>
+          </div>
+          <div class="trend-badge" id="inetTrendBadge">
+            --
+          </div>
+        </div>
+        <div class="stock-price-row">
+          <div class="price-current" id="inetPriceCurrent">Rp --</div>
+          <div class="price-change" id="inetPriceChange">--</div>
+        </div>
+        <div class="stock-metrics">
+          <div class="metric-item">
+            <span class="metric-label">Target 30 Hari</span>
+            <span class="metric-value" id="inetPriceTarget">Rp --</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Confidence</span>
+            <span class="metric-value" id="inetConfidence">--</span>
+          </div>
+          <div class="metric-item">
+            <span class="metric-label">Analisis Sentimen</span>
+            <span class="metric-value" id="inetSentimentVal">--</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CHART AND CONTROLS SECTION -->
+    <div class="main-dashboard-row">
+      <!-- High Performance Chart Panel -->
+      <div class="glass-panel chart-panel" style="position: relative;">
+        <!-- Loading overlay for chart regeneration -->
+        <div class="overlay-loader" id="chartLoader" style="display: none;">
+          <div class="loading-spinner"></div>
+          <p>Memproses Prediksi 30 Hari ke Depan...</p>
+        </div>
+        
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📈</span> Proyeksi Harga & Prediksi 30 Hari ke Depan
+          </div>
+          <div class="chart-toggles" style="display: flex; gap: 8px;">
+            <button class="btn btn-secondary active" id="btnShowPrice" style="padding: 6px 12px; font-size: 0.8rem; height: auto;">Harga</button>
+            <button class="btn btn-secondary" id="btnShowVolume" style="padding: 6px 12px; font-size: 0.8rem; height: auto;">Volume</button>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="stockChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Parameter Adjustment Panel -->
+      <div class="glass-panel control-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>⚙️</span> Parameter Model
+          </div>
+        </div>
+        
+        <form id="predictionParamsForm" onsubmit="event.preventDefault();">
+          <div class="control-group">
+            <label class="control-label" for="paramHargaBumi">Harga Awal BUMI (Rp)</label>
+            <input type="number" class="input-glass" id="paramHargaBumi" placeholder="Auto-fetch harga terakhir...">
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="paramHargaInet">Harga Awal INET (Rp)</label>
+            <input type="number" class="input-glass" id="paramHargaInet" placeholder="Auto-fetch harga terakhir...">
+          </div>
+          <div class="control-group">
+            <label class="control-label" for="paramDays">Hari Proyeksi (1 - 30)</label>
+            <input type="number" class="input-glass" id="paramDays" min="1" max="30" value="30">
+          </div>
+          <div class="control-group" style="margin-top: 24px;">
+            <label class="checkbox-label">
+              <input type="checkbox" id="paramUseSentiment" checked>
+              Integrasikan Analisis Sentimen Berita
+            </label>
+          </div>
+          <div class="run-btn-container">
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" id="btnGenerateCustomForecast">
+              Update Proyeksi Forecast
+            </button>
+          </div>
+        </form>
+
+        <!-- Live Terminal Log Window -->
+        <div class="logger-panel">
+          <div class="logger-header">
+            <span>💻 System Output Logs</span>
+            <span id="logTime">Idle</span>
+          </div>
+          <div class="logger-console" id="logConsole">System initialized. Waiting for action...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TECHNICAL INDICATORS & IDX STATUS SECTION -->
+    <div class="indicators-dashboard-row" style="display: grid; grid-template-columns: 8fr 4fr; gap: 24px; margin-bottom: 24px;">
+      <!-- Technical Signals Box -->
+      <div class="glass-panel technical-signals-panel" style="padding: 24px;">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>💡</span> Sinyal Teknikal Real-Time (Histori 150 Hari)
+          </div>
+          <div class="recommendation-badge" id="overallRecommendation" style="padding: 6px 12px; border-radius: 8px; font-weight: bold; font-family: var(--font-display); font-size: 0.85rem; background: rgba(255,255,255,0.05);">NEUTRAL</div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 16px;">
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px; text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 6px;">RSI (14-period)</div>
+            <div style="font-size: 1.4rem; font-weight: 700; font-family: var(--font-display);" id="indicatorRSI">--</div>
+            <div style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;" id="indicatorRSISignal">NEUTRAL</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px; text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 6px;">Moving Averages</div>
+            <div style="font-size: 0.85rem; font-weight: 700; font-family: var(--font-display); line-height: 1.3;" id="indicatorMA">MA5 vs MA20</div>
+            <div style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;" id="indicatorMASignal">NEUTRAL</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px; text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 6px;">Bollinger Bands</div>
+            <div style="font-size: 0.85rem; font-weight: 700; font-family: var(--font-display); line-height: 1.3;" id="indicatorBB">BB Position</div>
+            <div style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;" id="indicatorBBSignal">NEUTRAL</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-glass); border-radius: 12px; padding: 16px; text-align: center;">
+            <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500; margin-bottom: 6px;">MACD (12, 26)</div>
+            <div style="font-size: 1.4rem; font-weight: 700; font-family: var(--font-display);" id="indicatorMACD">--</div>
+            <div style="font-size: 0.75rem; font-weight: 600; margin-top: 4px;" id="indicatorMACDSignal">NEUTRAL</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- IDX session trading status -->
+      <div class="glass-panel idx-session-panel" style="padding: 24px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div class="panel-header" style="margin-bottom: 12px;">
+          <div class="panel-title">
+            <span>🏛️</span> Sesi Bursa Efek (IDX)
+          </div>
+        </div>
+        <div style="text-align: center; margin: 12px 0;">
+          <div id="idxSessionStatusBadge" style="display: inline-block; padding: 8px 16px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; border: 1px solid rgba(255,255,255,0.1);">MEMUAT...</div>
+          <p id="idxSessionDesc" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 8px;">Mengecek waktu server Jakarta (WIB)...</p>
+        </div>
+        <div style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; border-top: 1px solid var(--border-glass); padding-top: 8px;">
+          Senin - Kamis: 09:00 - 16:00 WIB (Istirahat 12:00 - 13:30)<br>
+          Jumat: 09:00 - 16:00 WIB (Istirahat 11:30 - 14:00)
+        </div>
+      </div>
+    </div>
+
+    <!-- NEWS FEED & SENTIMENT ANALYSIS DETAIL -->
+    <div class="news-sentiment-row">
+      <!-- Sentiment Gauge breakdown -->
+      <div class="glass-panel sentiment-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🧠</span> Sentimen Sentral (NewsAPI)
+          </div>
+        </div>
+        
+        <div class="sentiment-gauge-box">
+          <div class="gauge-val" id="sentimentPolarityScore">0.00</div>
+          <div class="gauge-label" id="sentimentClassLabel">NEUTRAL</div>
+        </div>
+        
+        <div class="sentiment-breakdown">
+          <div class="breakdown-row">
+            <span>Sangat Positif</span>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="pbStrongPos" style="width: 0%; background-color: var(--color-up)"></div>
+            </div>
+            <span id="cntStrongPos">0</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Positif</span>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="pbPos" style="width: 0%; background-color: #34d399"></div>
+            </div>
+            <span id="cntPos">0</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Netral</span>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="pbNeutral" style="width: 0%; background-color: var(--text-muted)"></div>
+            </div>
+            <span id="cntNeutral">0</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Negatif</span>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="pbNeg" style="width: 0%; background-color: #f87171"></div>
+            </div>
+            <span id="cntNeg">0</span>
+          </div>
+          <div class="breakdown-row">
+            <span>Sangat Negatif</span>
+            <div class="progress-bar-container">
+              <div class="progress-bar-fill" id="pbStrongNeg" style="style: width: 0%; background-color: var(--color-down)"></div>
+            </div>
+            <span id="cntStrongNeg">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Realtime News Feed -->
+      <div class="glass-panel news-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📰</span> Monitoring Berita Terkini & Analisis NLP
+          </div>
+        </div>
+        
+        <div class="news-feed" id="newsFeedContainer">
+          <!-- News cards will be generated by JavaScript -->
+          <p style="color: var(--text-muted); text-align: center; padding: 20px;">Memuat berita terbaru...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL EVALUATION METRICS SECTION -->
+    <div class="glass-panel evaluation-panel">
+      <div class="panel-header">
+        <div class="panel-title">
+          <span>📊</span> Evaluasi Akurasi Model Machine Learning (Uji Test Set 80:20)
+        </div>
+      </div>
+      
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Saham</th>
+              <th>Tipe Prediksi</th>
+              <th>Nama Model</th>
+              <th>Metrik Evaluasi Kesalahan / Akurasi</th>
+            </tr>
+          </thead>
+          <tbody id="evaluationTableBody">
+            <!-- Row metrics will be populated by Javascript -->
+            <tr>
+              <td colspan="4" style="text-align: center; color: var(--text-muted);">Memuat data metrik evaluasi model...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <p>© 2026 Sistem Prediksi Saham BUMI & INET - Didukung oleh yfinance, NewsAPI, dan Machine Learning Ensemble</p>
+      <p style="margin-top: 4px; font-size: 0.7rem; opacity: 0.6;">Penafian: Data dan analisis ini merupakan simulasi pembelajaran mesin dan tidak mewakili saran investasi keuangan.</p>
+    </footer>
+
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
