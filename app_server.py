@@ -102,11 +102,11 @@ class StockDashboardHandler(BaseHTTPRequestHandler):
 
         # Static routing
         if path == '/' or path == '/index.html':
-            self.send_static_file(os.path.join(WORKSPACE_DIR, 'index.html'), 'text/html; charset=utf-8')
+            self.send_static_file(os.path.join(WORKSPACE_DIR, 'public', 'index.html'), 'text/html; charset=utf-8')
         elif path == '/index.css':
-            self.send_static_file(os.path.join(WORKSPACE_DIR, 'index.css'), 'text/css; charset=utf-8')
+            self.send_static_file(os.path.join(WORKSPACE_DIR, 'public', 'index.css'), 'text/css; charset=utf-8')
         elif path == '/app.js':
-            self.send_static_file(os.path.join(WORKSPACE_DIR, 'app.js'), 'application/javascript; charset=utf-8')
+            self.send_static_file(os.path.join(WORKSPACE_DIR, 'public', 'app.js'), 'application/javascript; charset=utf-8')
         
         # Serve static images from output directory
         elif path.startswith('/output/'):
