@@ -14,7 +14,7 @@ import sys
 import urllib.parse
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-PORT = 8000
+PORT = int(os.environ.get('PORT', 8000))
 WORKSPACE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(WORKSPACE_DIR, 'output')
 
