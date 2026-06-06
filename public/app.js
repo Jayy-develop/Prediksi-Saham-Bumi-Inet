@@ -43,12 +43,12 @@ async function fetchAllData() {
     const infoRes = await fetch('/api/stock_info');
     state.stockInfo = await infoRes.json();
     
-    // Set default values in param forms
+    // Set live prices display in Control Panel
     if (state.stockInfo.BUMI && state.stockInfo.BUMI.current_price) {
-      document.getElementById('paramHargaBumi').value = state.stockInfo.BUMI.current_price;
+      document.getElementById('livePriceBumi').textContent = `Rp ${state.stockInfo.BUMI.current_price.toFixed(2)}`;
     }
     if (state.stockInfo.INET && state.stockInfo.INET.current_price) {
-      document.getElementById('paramHargaInet').value = state.stockInfo.INET.current_price;
+      document.getElementById('livePriceInet').textContent = `Rp ${state.stockInfo.INET.current_price.toFixed(2)}`;
     }
 
     // 2. Fetch historical data for both stocks
@@ -904,13 +904,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Custom Form update forecast button click listener
   document.getElementById('btnGenerateCustomForecast').addEventListener('click', () => {
-    const bumiPriceInput = document.getElementById('paramHargaBumi').value;
-    const inetPriceInput = document.getElementById('paramHargaInet').value;
-    
-    const hargaBumi = bumiPriceInput ? parseFloat(bumiPriceInput) : null;
-    const hargaInet = inetPriceInput ? parseFloat(inetPriceInput) : null;
-    
-    runForecastGeneration(hargaBumi, hargaInet);
+    // Automatically runs forecast on latest real-time stock prices (null, null)
+    runForecastGeneration(null, null);
   });
 
   // Live clock updating every second

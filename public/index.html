@@ -159,32 +159,36 @@
       <div class="glass-panel control-panel">
         <div class="panel-header">
           <div class="panel-title">
-            <span>⚙️</span> Parameter Model
+            <span>⚙️</span> Kontrol Prediksi AI
+          </div>
+        </div>
+        
+        <div class="live-prices-display" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-glass); padding: 14px; border-radius: 12px;">
+          <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Harga Pasar Terkini</div>
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);">BUMI.JK (Bumi Resources)</span>
+            <span id="livePriceBumi" style="font-family: var(--font-display); font-weight: 700; color: var(--color-bumi); font-size: 1.05rem;">Rp --</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 8px;">
+            <span style="font-size: 0.9rem; font-weight: 500; color: var(--text-secondary);">INET.JK (Indonesia Energy)</span>
+            <span id="livePriceInet" style="font-family: var(--font-display); font-weight: 700; color: var(--color-inet); font-size: 1.05rem;">Rp --</span>
           </div>
         </div>
         
         <form id="predictionParamsForm" onsubmit="event.preventDefault();">
           <div class="control-group">
-            <label class="control-label" for="paramHargaBumi">Harga Awal BUMI (Rp)</label>
-            <input type="number" class="input-glass" id="paramHargaBumi" placeholder="Auto-fetch harga terakhir...">
-          </div>
-          <div class="control-group">
-            <label class="control-label" for="paramHargaInet">Harga Awal INET (Rp)</label>
-            <input type="number" class="input-glass" id="paramHargaInet" placeholder="Auto-fetch harga terakhir...">
-          </div>
-          <div class="control-group">
             <label class="control-label" for="paramDays">Hari Proyeksi (1 - 30)</label>
             <input type="number" class="input-glass" id="paramDays" min="1" max="30" value="30">
           </div>
-          <div class="control-group" style="margin-top: 24px;">
+          <div class="control-group" style="margin-top: 16px;">
             <label class="checkbox-label">
               <input type="checkbox" id="paramUseSentiment" checked>
               Integrasikan Analisis Sentimen Berita
             </label>
           </div>
-          <div class="run-btn-container">
+          <div class="run-btn-container" style="margin-top: 24px;">
             <button class="btn btn-primary" style="width: 100%; justify-content: center;" id="btnGenerateCustomForecast">
-              Update Proyeksi Forecast
+              ⚡ Update Data & Jalankan Prediksi AI
             </button>
           </div>
         </form>
