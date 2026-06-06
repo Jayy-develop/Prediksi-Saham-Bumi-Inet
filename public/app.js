@@ -466,7 +466,7 @@ function updateNewsFeed() {
       return;
     }
 
-    articles.slice(0, 15).forEach(article => {
+    articles.forEach(article => {
       const card = document.createElement('div');
       card.className = 'news-card';
 

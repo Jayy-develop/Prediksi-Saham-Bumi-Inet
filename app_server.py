@@ -191,9 +191,9 @@ class StockDashboardHandler(BaseHTTPRequestHandler):
                     text_to_search = (item.get('title', '') + ' ' + item.get('description', '')).lower()
                     if any(kw in text_to_search for kw in keywords):
                         filtered_news.append(item)
-                self.send_json(filtered_news[:30]) # limit to 30 articles
+                self.send_json(filtered_news)
             else:
-                self.send_json(news[:40])
+                self.send_json(news)
 
         elif path == '/api/evaluation':
             eval_data = {}
