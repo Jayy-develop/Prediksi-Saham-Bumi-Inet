@@ -47,8 +47,18 @@ SENTIMENT_CACHE_DURATION = 300  # Cache sentiment 5 menit
 # NEWS SEARCH KEYWORDS
 # ============================================================================
 SEARCH_KEYWORDS = {
-    'BUMI': ['BUMI.JK', 'PT Bumi Resources', 'Bumi Resources Mineral', 'coal Indonesia'],
-    'INET': ['INET.JK', 'PT Indonesia Energy', 'Indonesia Energy', 'INET stock'],
+    'BUMI': [
+        'BUMI.JK', 'PT Bumi Resources', 'Bumi Resources Mineral', 'coal Indonesia',
+        'batubara Indonesia', 'IDX pertambangan', 'coal mining IDX', 'harga batubara', 
+        'sektor tambang IDX', 'grup salim batubara', 'tambang batubara idx',
+        'coal mining', 'global coal', 'coal demand'
+    ],
+    'INET': [
+        'INET.JK', 'PT Indonesia Energy', 'Indonesia Energy', 'INET stock',
+        'minyak bumi Indonesia', 'IDX energi', 'oil gas Indonesia', 'harga minyak mentah',
+        'sektor energi IDX', 'kruh block INET', 'drilling oil indonesia',
+        'crude oil', 'natural gas', 'global energy market'
+    ],
     'GENERAL': ['Indonesia stock market', 'IDX', 'Jakarta stock exchange', 'Indonesian economy']
 }
 
