@@ -562,9 +562,9 @@ header {
 }
 
 /* News and Sentiment Section */
-.news-sentiment-row {
+.news-section-row {
   display: grid;
-  grid-template-columns: 4fr 8fr;
+  grid-template-columns: 3fr 9fr;
   gap: 24px;
   margin-bottom: 24px;
 }
@@ -572,6 +572,68 @@ header {
 .sentiment-panel {
   padding: 24px;
 }
+
+/* Dual news panel */
+.news-panel-dual {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dual-news-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  flex: 1;
+}
+
+.news-column {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.news-column-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+
+.bumi-col-header {
+  background: var(--color-bumi-glow);
+  color: var(--color-bumi);
+  border: 1px solid rgba(234, 179, 8, 0.2);
+}
+
+.inet-col-header {
+  background: var(--color-inet-glow);
+  color: var(--color-inet);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.col-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.news-column .news-feed {
+  overflow-y: auto;
+  max-height: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-right: 4px;
+}
+
 
 .sentiment-breakdown {
   display: flex;
@@ -601,20 +663,12 @@ header {
   border-radius: 3px;
 }
 
-/* News feed panel */
-.news-panel {
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  max-height: 520px;
-}
-
 .news-feed {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding-right: 8px;
+  gap: 12px;
+  padding-right: 4px;
 }
 
 .news-card {
@@ -792,7 +846,7 @@ footer {
   .main-dashboard-row {
     grid-template-columns: 1fr;
   }
-  .news-sentiment-row {
+  .news-section-row {
     grid-template-columns: 1fr;
   }
   .indicators-dashboard-row {
@@ -844,6 +898,9 @@ footer {
   .signals-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .dual-news-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -865,6 +922,9 @@ footer {
   }
   .price-current {
     font-size: 1.8rem;
+  }
+  .dual-news-grid {
+    grid-template-columns: 1fr;
   }
 }
 

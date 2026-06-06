@@ -430,50 +430,53 @@ function updateSentimentPanel() {
   document.getElementById('pbStrongNeg').style.width = `${(strongNeg / total) * 100}%`;
 }
 
-// Render News Feed
+// Render News Feed (both BUMI and INET columns always)
 function updateNewsFeed() {
-  const symbol = state.activeStock;
-  const articles = state.news[symbol] || [];
-  const container = document.getElementById('newsFeedContainer');
-  
-  container.innerHTML = '';
-  
-  if (articles.length === 0) {
-    container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">Tidak ada berita ditemukan untuk ${symbol}.</p>`;
-    return;
-  }
-  
-  articles.forEach(article => {
-    const card = document.createElement('div');
-    card.className = 'news-card';
-    
-    const dateStr = article.timestamp ? new Date(article.timestamp).toLocaleString('id-ID') : 'Baru-baru ini';
-    const polarity = parseFloat(article.polarity || 0.0);
-    
-    let sentBadge = 'NEUTRAL';
-    let sentColor = 'var(--text-muted)';
-    
-    if (polarity > 0.6) { sentBadge = 'STRONG POSITIVE'; sentColor = colors.UP; }
-    else if (polarity > 0.1) { sentBadge = 'POSITIVE'; sentColor = '#34d399'; }
-    else if (polarity < -0.6) { sentBadge = 'STRONG NEGATIVE'; sentColor = colors.DOWN; }
-    else if (polarity < -0.1) { sentBadge = 'NEGATIVE'; sentColor = '#f87171'; }
-    
-    card.innerHTML = `
-      <div class="news-card-header">
-        <span class="news-source">${article.source || 'NewsAPI'}</span>
-        <span>${dateStr}</span>
-      </div>
-      <h4 class="news-card-title">
-        <a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a>
-      </h4>
-      <p class="news-card-desc">${article.description || 'Tidak ada deskripsi.'}</p>
-      <div class="news-card-footer">
-        <span style="font-size: 0.7rem; color: var(--text-muted);">Polarity: ${polarity.toFixed(2)}</span>
-        <span style="font-size: 0.75rem; font-weight: 700; color: ${sentColor}">${sentBadge}</span>
-      </div>
-    `;
-    
-    container.appendChild(card);
+  ['BUMI', 'INET'].forEach(sym => {
+    const articles = state.news[sym] || [];
+    const containerId = sym === 'BUMI' ? 'newsFeedBumi' : 'newsFeedInet';
+    const container = document.getElementById(containerId);
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (articles.length === 0) {
+      container.innerHTML = `<p style="color: var(--text-muted); text-align: center; padding: 20px;">Tidak ada berita untuk ${sym}.</p>`;
+      return;
+    }
+
+    articles.slice(0, 15).forEach(article => {
+      const card = document.createElement('div');
+      card.className = 'news-card';
+
+      const dateStr = article.timestamp ? new Date(article.timestamp).toLocaleString('id-ID') : 'Baru-baru ini';
+      const polarity = parseFloat(article.polarity || 0.0);
+
+      let sentBadge = 'NEUTRAL';
+      let sentColor = 'var(--text-muted)';
+
+      if (polarity > 0.6)       { sentBadge = 'STRONG POS'; sentColor = colors.UP; }
+      else if (polarity > 0.1)  { sentBadge = 'POSITIF';    sentColor = '#34d399'; }
+      else if (polarity < -0.6) { sentBadge = 'STRONG NEG'; sentColor = colors.DOWN; }
+      else if (polarity < -0.1) { sentBadge = 'NEGATIF';    sentColor = '#f87171'; }
+
+      card.innerHTML = `
+        <div class="news-card-header">
+          <span class="news-source">${article.source || 'NewsAPI'}</span>
+          <span>${dateStr}</span>
+        </div>
+        <h4 class="news-card-title">
+          <a href="${article.url}" target="_blank" rel="noopener noreferrer">${article.title}</a>
+        </h4>
+        <p class="news-card-desc">${article.description || 'Tidak ada deskripsi.'}</p>
+        <div class="news-card-footer">
+          <span style="font-size: 0.7rem; color: var(--text-muted);">Polarity: ${polarity.toFixed(2)}</span>
+          <span style="font-size: 0.75rem; font-weight: 700; color: ${sentColor}">${sentBadge}</span>
+        </div>
+      `;
+
+      container.appendChild(card);
+    });
   });
 }
 
